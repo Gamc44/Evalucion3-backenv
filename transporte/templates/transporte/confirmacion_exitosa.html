@@ -1,0 +1,56 @@
+{% extends 'transporte/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="text-center mb-0">
+                        <i class="fas fa-check-circle me-2"></i>¡Cotización Confirmada!
+                    </h3>
+                </div>
+                <div class="card-body text-center">
+                    <div class="alert alert-success">
+                        <h4><i class="fas fa-shipping-fast me-2"></i>Pedido Confirmado Exitosamente</h4>
+                    </div>
+                    
+                    <div class="row text-start">
+                        <div class="col-md-6">
+                            <p><strong>Código de Cotización:</strong> {{ cotizacion.codigo_seguimiento }}</p>
+                            <p><strong>Código de Despacho:</strong> {{ despacho.codigo_seguimiento }}</p>
+                            <p><strong>Origen:</strong> {{ cotizacion.origen }}</p>
+                            <p><strong>Destino:</strong> {{ cotizacion.destino }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Peso:</strong> {{ cotizacion.peso_kg }} kg</p>
+                            <p><strong>Tipo de Carga:</strong> {{ cotizacion.tipo_carga }}</p>
+                            <p><strong>Total:</strong> ${{ cotizacion.costo_total|floatformat:0 }}</p>
+                            <p><strong>Estado:</strong> <span class="badge bg-warning">Pendiente de recolección</span></p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle me-2"></i>Próximos pasos</h5>
+                        <p class="mb-0">
+                            Nos contactaremos contigo en las próximas 24 horas para coordinar la recolección de tu paquete.
+                            Puedes seguir el estado de tu envío en la sección "Pedidos".
+                        </p>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{% url 'pedidos' %}" class="btn btn-primary me-3">
+                            <i class="fas fa-list me-2"></i>Ver Mis Pedidos
+                        </a>
+                        <a href="{% url 'cotizar' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-plus me-2"></i>Nueva Cotización
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

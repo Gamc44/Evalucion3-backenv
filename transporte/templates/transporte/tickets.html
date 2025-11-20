@@ -1,0 +1,64 @@
+{% extends 'transporte/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center mb-0">
+                        <i class="fas fa-ticket-alt me-2"></i>Sistema de Tickets
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if user.is_authenticated %}
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle me-2"></i>Sistema de Soporte</h5>
+                        <p class="mb-0">Para reportar problemas con tus envíos o solicitar información adicional.</p>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Asunto</label>
+                            <input type="text" name="asunto" class="form-control" required 
+                                   placeholder="Ej: Problema con seguimiento de envío">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripción del problema</label>
+                            <textarea name="descripcion" class="form-control" rows="5" required 
+                                      placeholder="Describe detalladamente el problema..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Prioridad</label>
+                            <select name="prioridad" class="form-control" required>
+                                <option value="BAJA">Baja</option>
+                                <option value="MEDIA" selected>Media</option>
+                                <option value="ALTA">Alta</option>
+                                <option value="URGENTE">Urgente</option>
+                            </select>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Enviar Ticket
+                            </button>
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="alert alert-warning text-center">
+                        <h4><i class="fas fa-exclamation-triangle me-2"></i>Debes iniciar sesión</h4>
+                        <p>Para crear un ticket, necesitas estar registrado en el sistema.</p>
+                        <a href="/admin/login/" class="btn btn-primary me-2">
+                            <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                        </a>
+                        <a href="{% url 'register' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-user-plus me-2"></i>Registrarse
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

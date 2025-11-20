@@ -1,0 +1,105 @@
+{% extends 'transporte/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="text-center mb-5">
+        <i class="fas fa-tachometer-alt me-2"></i>Panel de Administración
+    </h2>
+    
+    <!-- Estadísticas -->
+    <div class="row mb-5">
+        <div class="col-md-2 mb-4">
+            <div class="card stats-card text-center">
+                <div class="card-body">
+                    <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                    <h4>{{ stats.total_clientes }}</h4>
+                    <p class="card-text">Clientes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mb-4">
+            <div class="card stats-card text-center">
+                <div class="card-body">
+                    <i class="fas fa-truck fa-2x text-success mb-2"></i>
+                    <h4>{{ stats.total_vehiculos }}</h4>
+                    <p class="card-text">Vehículos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mb-4">
+            <div class="card stats-card text-center">
+                <div class="card-body">
+                    <i class="fas fa-plane fa-2x text-info mb-2"></i>
+                    <h4>{{ stats.total_aeronaves }}</h4>
+                    <p class="card-text">Aeronaves</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mb-4">
+            <div class="card stats-card text-center">
+                <div class="card-body">
+                    <i class="fas fa-id-card fa-2x text-warning mb-2"></i>
+                    <h4>{{ stats.total_empleados }}</h4>
+                    <p class="card-text">Empleados</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mb-4">
+            <div class="card stats-card text-center">
+                <div class="card-body">
+                    <i class="fas fa-shipping-fast fa-2x text-danger mb-2"></i>
+                    <h4>{{ stats.total_despachos }}</h4>
+                    <p class="card-text">Despachos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Acciones Rápidas -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cog me-2"></i>Gestión del Sistema
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="/admin/transporte/cliente/" class="btn btn-outline-primary mb-2">
+                            <i class="fas fa-users me-2"></i>Gestionar Clientes
+                        </a>
+                        <a href="/admin/transporte/vehiculo/" class="btn btn-outline-success mb-2">
+                            <i class="fas fa-truck me-2"></i>Gestionar Vehículos
+                        </a>
+                        <a href="/admin/transporte/aeronave/" class="btn btn-outline-info mb-2">
+                            <i class="fas fa-plane me-2"></i>Gestionar Aeronaves
+                        </a>
+                        <a href="/admin/transporte/despacho/" class="btn btn-outline-warning mb-2">
+                            <i class="fas fa-shipping-fast me-2"></i>Gestionar Despachos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Informes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Próximamente: Gráficos y reportes detallados del sistema.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'pedidos' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i>Ver Todos los Pedidos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,137 @@
+{% extends 'transporte/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center mb-0">
+                        <i class="fas fa-shipping-fast me-2"></i>Mis Pedidos
+                    </h3>
+                </div>
+                <div class="card-body">
+                    
+                    {% if user.is_authenticated %}
+                        {% if es_admin %}
+                        <div class="alert alert-info mb-4">
+                            <h5><i class="fas fa-user-shield me-2"></i>Vista de Administrador</h5>
+                            <p class="mb-0">Estás viendo todos los pedidos del sistema. <a href="{% url 'gestion_pedidos' %}" class="alert-link">Ir a Gestión Avanzada</a></p>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info mb-4">
+                            <h5><i class="fas fa-user me-2"></i>Mis Pedidos</h5>
+                            <p class="mb-0">Aquí puedes ver el estado de tus envíos y cotizaciones.</p>
+                        </div>
+                        {% endif %}
+
+                        <!-- Cotizaciones -->
+                        <h4 class="mb-3"><i class="fas fa-file-invoice-dollar me-2"></i>Cotizaciones</h4>
+                        {% if cotizaciones %}
+                        <div class="table-responsive mb-5">
+                            <table class="table table-dark table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Origen - Destino</th>
+                                        <th>Peso</th>
+                                        <th>Tipo</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cotizacion in cotizaciones %}
+                                    <tr>
+                                        <td><strong>{{ cotizacion.codigo_seguimiento }}</strong></td>
+                                        <td>{{ cotizacion.origen }} → {{ cotizacion.destino }}</td>
+                                        <td>{{ cotizacion.peso_kg }} kg</td>
+                                        <td>{{ cotizacion.tipo_carga }}</td>
+                                        <td>${{ cotizacion.costo_total|floatformat:0 }}</td>
+                                        <td>
+                                            <span class="badge 
+                                                {% if cotizacion.estado == 'PENDIENTE' %}bg-warning
+                                                {% elif cotizacion.estado == 'CONFIRMADA' %}bg-success
+                                                {% else %}bg-danger{% endif %}">
+                                                {{ cotizacion.get_estado_display }}
+                                            </span>
+                                        </td>
+                                        <td>{{ cotizacion.fecha_creacion|date:"d/m/Y" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            <p class="mb-0">No tienes cotizaciones registradas.</p>
+                        </div>
+                        {% endif %}
+
+                        <!-- Despachos -->
+                        <h4 class="mb-3"><i class="fas fa-truck me-2"></i>Envíos</h4>
+                        {% if despachos %}
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Ruta</th>
+                                        <th>Estado</th>
+                                        <th>Costo</th>
+                                        <th>Fecha Despacho</th>
+                                        {% if es_admin %}
+                                        <th>Cliente</th>
+                                        {% endif %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for despacho in despachos %}
+                                    <tr>
+                                        <td><strong>{{ despacho.codigo_seguimiento }}</strong></td>
+                                        <td>{{ despacho.ruta.origen }} → {{ despacho.ruta.destino }}</td>
+                                        <td>
+                                            <span class="badge 
+                                                {% if despacho.estado == 'PENDIENTE' %}bg-warning
+                                                {% elif despacho.estado == 'ASIGNADO' %}bg-info
+                                                {% elif despacho.estado == 'EN_RUTA' %}bg-primary
+                                                {% elif despacho.estado == 'ENTREGADO' %}bg-success
+                                                {% else %}bg-danger{% endif %}">
+                                                {{ despacho.get_estado_display }}
+                                            </span>
+                                        </td>
+                                        <td>${{ despacho.costo_envio|floatformat:0 }}</td>
+                                        <td>{{ despacho.fecha_despacho|date:"d/m/Y" }}</td>
+                                        {% if es_admin %}
+                                        <td>{{ despacho.cliente.nombre }}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            <p class="mb-0">No tienes envíos registrados.</p>
+                        </div>
+                        {% endif %}
+
+                    {% else %}
+                    <div class="alert alert-warning text-center">
+                        <h4><i class="fas fa-exclamation-triangle me-2"></i>Debes iniciar sesión</h4>
+                        <p>Para ver tus pedidos, necesitas estar registrado en el sistema.</p>
+                        <a href="/admin/login/" class="btn btn-primary me-2">
+                            <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                        </a>
+                        <a href="{% url 'register' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-user-plus me-2"></i>Registrarse
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

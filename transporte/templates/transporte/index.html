@@ -1,0 +1,91 @@
+cat > transporte/templates/transporte/index.html << 'EOF'
+{% extends 'transporte/base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="py-5 text-center" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3') center/cover;">
+    <div class="container">
+        <h1 class="display-4 mb-4">Logística Global</h1>
+        <p class="lead mb-4">Transporte terrestre y aéreo de carga nacional e internacional</p>
+        <a href="{% url 'cotizar' %}" class="btn btn-primary btn-lg me-3">
+            <i class="fas fa-calculator me-2"></i>Cotizar Envío
+        </a>
+        <a href="{% url 'pedidos' %}" class="btn btn-outline-light btn-lg">
+            <i class="fas fa-shipping-fast me-2"></i>Mis Pedidos
+        </a>
+    </div>
+</section>
+
+<!-- Estadísticas -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Estadísticas de Despachos</h2>
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-clipboard-list fa-3x text-warning mb-3"></i>
+                        <h3>{{ total_despachos }}</h3>
+                        <p class="card-text">Total Despachos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-clock fa-3x text-info mb-3"></i>
+                        <h3>{{ pendientes }}</h3>
+                        <p class="card-text">Pendientes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-truck fa-3x text-primary mb-3"></i>
+                        <h3>{{ en_ruta }}</h3>
+                        <p class="card-text">En Ruta</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <h3>{{ entregados }}</h3>
+                        <p class="card-text">Entregados</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Servicios -->
+<section class="py-5 bg-dark">
+    <div class="container">
+        <h2 class="text-center mb-5">Nuestros Servicios</h2>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-truck fa-4x text-primary mb-3"></i>
+                        <h4>Transporte Terrestre</h4>
+                        <p>Camiones, furgones y buses para transporte nacional de carga</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-plane fa-4x text-info mb-3"></i>
+                        <h4>Transporte Aéreo</h4>
+                        <p>Aviones y helicópteros para envíos urgentes e internacionales</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+EOF

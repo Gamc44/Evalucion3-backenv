@@ -1,0 +1,63 @@
+{% extends 'transporte/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Registro de Usuario
+                    </h3>
+                </div>
+                <div class="card-body">
+                    
+                    {% if errors %}
+                    <div class="alert alert-danger">
+                        <strong>Errores:</strong>
+                        <ul>
+                            {% for error in errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Nombre de usuario</label>
+                            <input type="text" name="username" class="form-control" required 
+                                   placeholder="Ingresa tu nombre de usuario"
+                                   value="{{ request.POST.username }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" name="password1" class="form-control" required 
+                                   placeholder="Ingresa tu contraseña (mínimo 8 caracteres)">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Confirmar contraseña</label>
+                            <input type="password" name="password2" class="form-control" required 
+                                   placeholder="Confirma tu contraseña">
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-user-plus me-2"></i>Registrarse
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <a href="/admin/login/">¿Ya tienes cuenta? Inicia sesión</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

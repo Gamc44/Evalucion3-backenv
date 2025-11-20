@@ -1,0 +1,231 @@
+{% extends 'transporte/base.html' %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-tasks me-2"></i>Gestión de Pedidos</h2>
+        <div>
+            <a href="{% url 'dashboard_admin' %}" class="btn btn-outline-secondary me-2">
+                <i class="fas fa-arrow-left me-1"></i>Volver al Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h4>{{ stats.total|default:0 }}</h4>
+                    <p class="mb-0">Total Pedidos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h4>{{ stats.pendientes|default:0 }}</h4>
+                    <p class="mb-0">Pendientes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h4>{{ stats.asignados|default:0 }}</h4>
+                    <p class="mb-0">Asignados</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h4>{{ stats.en_ruta|default:0 }}</h4>
+                    <p class="mb-0">En Ruta</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h4>{{ stats.entregados|default:0 }}</h4>
+                    <p class="mb-0">Entregados</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-danger text-white">
+                <div class="card-body text-center">
+                    <h4>{{ stats.cancelados|default:0 }}</h4>
+                    <p class="mb-0">Cancelados</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Filtrar por estado:</label>
+                    <select name="estado" class="form-select" onchange="this.form.submit()">
+                        <option value="">Todos los estados</option>
+                        {% for estado_val, estado_label in estados %}
+                            <option value="{{ estado_val }}" {% if estado_filter == estado_val %}selected{% endif %}>
+                                {{ estado_label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-8 d-flex align-items-end">
+                    <a href="{% url 'gestion_pedidos' %}" class="btn btn-outline-secondary">Limpiar filtros</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Lista de Pedidos</h5>
+        </div>
+        <div class="card-body">
+            {% if despachos %}
+            <div class="table-responsive">
+                <table class="table table-dark table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Cliente</th>
+                            <th>Origen - Destino</th>
+                            <th>Estado</th>
+                            <th>Fecha Despacho</th>
+                            <th>Costo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for despacho in despachos %}
+                        <tr>
+                            <td><strong>{{ despacho.codigo_seguimiento }}</strong></td>
+                            <td>
+                                {{ despacho.cliente.nombre }}<br>
+                                <small class="text-muted">{{ despacho.cliente.email }}</small>
+                            </td>
+                            <td>
+                                {{ despacho.ruta.origen }} → {{ despacho.ruta.destino }}<br>
+                                <small class="text-muted">{{ despacho.ruta.tipo_transporte }}</small>
+                            </td>
+                            <td>
+                                <span class="badge 
+                                    {% if despacho.estado == 'PENDIENTE' %}bg-warning
+                                    {% elif despacho.estado == 'ASIGNADO' %}bg-info
+                                    {% elif despacho.estado == 'EN_RUTA' %}bg-primary
+                                    {% elif despacho.estado == 'ENTREGADO' %}bg-success
+                                    {% else %}bg-danger{% endif %}">
+                                    {{ despacho.get_estado_display }}
+                                </span>
+                            </td>
+                            <td>{{ despacho.fecha_despacho|date:"d/m/Y H:i" }}</td>
+                            <td>${{ despacho.costo_envio|floatformat:0 }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" 
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                        Acciones
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" 
+                                               data-bs-target="#estadoModal{{ despacho.id }}">
+                                                <i class="fas fa-sync me-2"></i>Cambiar Estado
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'asignar_empleado' despacho.id %}">
+                                                <i class="fas fa-user-plus me-2"></i>Asignar Personal
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="modal fade" id="estadoModal{{ despacho.id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content bg-dark">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Cambiar Estado - {{ despacho.codigo_seguimiento }}</h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form class="estado-form" data-despacho-id="{{ despacho.id }}">
+                                                    {% csrf_token %}
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Nuevo Estado:</label>
+                                                        <select name="estado" class="form-select" required>
+                                                            {% for estado_val, estado_label in estados %}
+                                                                <option value="{{ estado_val }}" 
+                                                                    {% if despacho.estado == estado_val %}selected{% endif %}>
+                                                                    {{ estado_label }}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-4">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <h5>No hay pedidos para mostrar</h5>
+                <p class="text-muted">No se encontraron pedidos con los filtros aplicados.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.estado-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const despachoId = this.dataset.despachoId;
+            const formData = new FormData(this);
+            
+            fetch(`/actualizar-estado/${despachoId}/`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById(`estadoModal${despachoId}`));
+                    modal.hide();
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al actualizar el estado');
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'transporte/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center mb-0">
+                        <i class="fas fa-calculator me-2"></i>Cotizar Envío
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Origen</label>
+                                <select name="origen" class="form-control" required>
+                                    <option value="">Selecciona origen</option>
+                                    <option value="Santiago">Santiago</option>
+                                    <option value="Valparaíso">Valparaíso</option>
+                                    <option value="Concepción">Concepción</option>
+                                    <option value="Temuco">Temuco</option>
+                                    <option value="Antofagasta">Antofagasta</option>
+                                    <option value="Iquique">Iquique</option>
+                                    <option value="Puerto Montt">Puerto Montt</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Destino</label>
+                                <select name="destino" class="form-control" required>
+                                    <option value="">Selecciona destino</option>
+                                    <option value="Santiago">Santiago</option>
+                                    <option value="Valparaíso">Valparaíso</option>
+                                    <option value="Concepción">Concepción</option>
+                                    <option value="Temuco">Temuco</option>
+                                    <option value="Antofagasta">Antofagasta</option>
+                                    <option value="Iquique">Iquique</option>
+                                    <option value="Puerto Montt">Puerto Montt</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Peso (kg)</label>
+                                <input type="number" name="peso" class="form-control" step="0.1" min="0.1" required 
+                                       placeholder="Ej: 5.5">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tipo de Carga</label>
+                                <select name="tipo_carga" class="form-control" required>
+                                    <option value="GENERAL">General - $100/kg</option>
+                                    <option value="FRAGIL">Frágil - $150/kg</option>
+                                    <option value="PELIGROSA">Peligrosa - $200/kg</option>
+                                    <option value="REFRIGERADA">Refrigerada - $180/kg</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Descripción de la carga</label>
+                            <textarea name="descripcion" class="form-control" rows="3" 
+                                      placeholder="Describe qué estás enviando..."></textarea>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-calculator me-2"></i>Calcular Cotización
+                            </button>
+                        </div>
+                    </form>
+
+                    {% if cotizacion %}
+                    <div class="alert alert-success mt-4">
+                        <h4 class="alert-heading">
+                            <i class="fas fa-receipt me-2"></i>Cotización Calculada
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Origen:</strong> {{ origen }}</p>
+                                <p><strong>Destino:</strong> {{ destino }}</p>
+                                <p><strong>Distancia:</strong> {{ distancia }} km</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Peso:</strong> {{ peso }} kg</p>
+                                <p><strong>Tipo de carga:</strong> {{ tipo_carga }}</p>
+                                <p><strong>Costo por kg:</strong> ${{ costo_por_kg }}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <h3 class="mb-0 text-center">Total: ${{ cotizacion|floatformat:0 }}</h3>
+                        <p class="text-center mt-2 mb-3">
+                            <small>Precio incluye transporte y seguro básico</small>
+                        </p>
+                        
+                        {% if codigo_cotizacion %}
+                        <div class="text-center">
+                            <p><strong>Código de cotización:</strong> {{ codigo_cotizacion }}</p>
+                            <a href="#confirmar" class="btn btn-success btn-lg">
+                                <i class="fas fa-check me-2"></i>Confirmar Pedido
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Formulario de confirmación (se muestra al hacer clic en Confirmar Pedido) -->
+                    {% if cotizacion and codigo_cotizacion %}
+                    <div id="confirmar" class="mt-4" style="display: none;">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-user me-2"></i>Confirmar Pedido
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <form method="post" action="{% url 'confirmar_cotizacion' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="codigo_cotizacion" value="{{ codigo_cotizacion }}">
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Nombre Completo</label>
+                                            <input type="text" name="nombre" class="form-control" required 
+                                                   placeholder="Tu nombre completo">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" name="email" class="form-control" required 
+                                                   placeholder="tu@email.com">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Teléfono</label>
+                                        <input type="tel" name="telefono" class="form-control" required 
+                                               placeholder="+56912345678">
+                                    </div>
+                                    
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-success btn-lg">
+                                            <i class="fas fa-check me-2"></i>Confirmar y Crear Pedido
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        // Mostrar formulario de confirmación al hacer clic en el botón
+                        document.querySelector('a[href="#confirmar"]').addEventListener('click', function(e) {
+                            e.preventDefault();
+                            document.getElementById('confirmar').style.display = 'block';
+                            this.style.display = 'none';
+                        });
+                    </script>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
